@@ -1,3 +1,4 @@
 .goss
 .private
 **/*.pyc
+tmp
