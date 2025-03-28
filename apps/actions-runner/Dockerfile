@@ -15,7 +15,7 @@ ENV \
 
 USER root
 
-RUN echo "${VERSION}"
+RUN echo "VERSION: ${VERSION}"
 
 RUN \
     apt-get -qq update \
