@@ -8,13 +8,17 @@ _An opinionated collection of container images_
 
 <div align="center">
 
-![GitHub Repo stars](https://img.shields.io/github/stars/home-operations/containers?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/home-operations/containers?style=for-the-badge)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/home-operations/containers/release.yaml?style=for-the-badge&label=Release)
+![GitHub Repo stars](https://img.shields.io/github/stars/first-it-consulting/containers?style=for-the-badge)
+![GitHub forks](https://img.shields.io/github/forks/first-it-consulting/containers?style=for-the-badge)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/first-it-consulting/containers/release.yaml?style=for-the-badge&label=Release)
 
 </div>
 
-Welcome to our container images, if looking for a container start by [browsing the GitHub Packages page for this repo's packages](https://github.com/orgs/home-operations/packages?repo_name=containers).
+Welcome to our container images, if looking for a container start by [browsing the GitHub Packages page for this repo's packages](https://github.com/orgs/first-it-consulting/packages?repo_name=containers).
+
+This project is heavily inspired from [home-operations](https://github.com/home-operations/containers/tree/main).
+
+This is almost a fork of the the home-operations project with the aim to have my own images available fpr my home lab cluster. However, I want also learn how thinks are working and got inspired from this project.
 
 ## Mission statement
 
@@ -30,12 +34,12 @@ The containers built here do not use immutable tags, as least not in the more co
 
 We do take a similar approach but instead of appending a `-ls69` or `-r420` prefix to the tag we instead insist on pinning to the sha256 digest of the image, while this is not as pretty it is just as functional in making the images immutable.
 
-| Container                                          | Immutable |
-|----------------------------------------------------|-----------|
-| `ghcr.io/home-operations/sonarr:rolling`                   | ❌         |
-| `ghcr.io/home-operations/sonarr:4.0.13.2932`                | ❌         |
-| `ghcr.io/home-operations/sonarr:rolling@sha256:8053...`    | ✅         |
-| `ghcr.io/home-operations/sonarr:4.0.13.2932@sha256:8053...` | ✅         |
+| Container                                                              | Immutable |
+|------------------------------------------------------------------------|-----------|
+| `ghcr.io/first-it-consulting/gitlab-runner:rolling`                    | ❌         |
+| `ghcr.io/first-it-consulting/gitlab-runner:4.0.13.2932`                | ❌         |
+| `ghcr.io/first-it-consulting/gitlab-runner:rolling@sha256:8053...`     | ✅         |
+| `ghcr.io/first-it-consulting/gitlab-runner:4.0.13.2932@sha256:8053...` | ✅         |
 
 _If pinning an image to the sha256 digest, tools like [Renovate](https://github.com/renovatebot/renovate) support updating the container on a digest or application version change._
 
@@ -47,13 +51,13 @@ To run these containers as non-root make sure you update your configuration to t
 
 ```yaml
 networks:
-  sonarr:
-    name: sonarr
+  gitlab-runner:
+    name: gitlab-runner
     external: true
 services:
-  sonarr:
-    image: ghcr.io/home-operations/sonarr:4.0.13.2932
-    container_name: sonarr
+  gitlab-runner:
+    image: ghcr.io/first-it-consulting/gitlab-runner:4.0.13.2932
+    container_name: gitlab-runner
     user: 65534:65534
     # ...
 ```
@@ -64,7 +68,7 @@ services:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sonarr
+  name: gitlab-runner
 # ...
 spec:
   # ...
@@ -105,7 +109,7 @@ These container images are signed using the [attest-build-provenance](https://gi
 The attestations can be checked with the following command, verifying that the image is actually built by the GitHub CI system:
 
 ```sh
-gh attestation verify --repo home-operations/containers oci://ghcr.io/home-operations/${APP}:${TAG}
+gh attestation verify --repo first-it-consulting/containers oci://ghcr.io/first-it-consulting/${APP}:${TAG}
 ```
 
 ### Eschewed features
