@@ -18,7 +18,7 @@ Welcome to our container images, if looking for a container start by [browsing t
 
 This project is heavily inspired from [home-operations](https://github.com/home-operations/containers/tree/main).
 
-This is almost a fork of the the home-operations project with the aim to have my own images available fpr my home lab cluster. However, I want also learn how thinks are working and got inspired from this project.
+This is almost a fork of the the home-operations project with the aim to have my own images available for my home lab cluster. However, I want also learn how things are working and got inspired from this project.
 
 ## Mission statement
 
