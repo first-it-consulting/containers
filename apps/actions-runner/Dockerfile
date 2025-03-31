@@ -20,6 +20,7 @@ RUN \
     && \
     apt-get -qq install -y --no-install-recommends --no-install-suggests \
         ca-certificates \
+        apt-utils \
         curl \
         jo \
         moreutils \
@@ -40,7 +41,14 @@ RUN \
         && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
         && apt update \
         && apt install gh -y \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    && \
+    curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/${TARGETARCH}/kubectl" \
+        && chmod +x ./kubectl \
+        && mv ./kubectl /usr/local/bin/kubectl \
+    && \
+    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 \
+        && chmod +x get_helm.sh && ./get_helm.sh \
+        && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 USER runner
 
