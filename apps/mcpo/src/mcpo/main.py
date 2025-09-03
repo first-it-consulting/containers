@@ -410,7 +410,7 @@ async def lifespan(app: FastAPI):
                 headers = getattr(app.state, "headers", None)
                 client_context = sse_client(
                     url=args[0],
-                    sse_read_timeout=connection_timeout or 900,
+                    sse_read_timeout=connection_timeout or 150,
                     headers=headers,
                 )
             elif server_type == "streamable-http":
