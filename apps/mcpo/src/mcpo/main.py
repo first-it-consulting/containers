@@ -92,7 +92,7 @@ async def maintain_sse_connection(app: FastAPI, url: str, headers: Optional[Dict
                             await asyncio.sleep(10)  # Check every 10 seconds
                             try:
                                 # Try to list tools to check if session is still alive
-                                await session.list_tools()
+                                await session.send_ping()
                             except Exception as ping_error:
                                 logger.warning(f"Session health check failed: {ping_error}")
                                 raise  # This will trigger reconnection
