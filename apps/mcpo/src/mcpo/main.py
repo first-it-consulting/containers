@@ -32,6 +32,83 @@ from mcpo.utils.config_watcher import ConfigWatcher
 logger = logging.getLogger(__name__)
 
 
+async def create_sse_client_with_retry(url: str, headers: Optional[Dict] = None, 
+                                     connection_timeout: int = 150, 
+                                     max_retries: int = 5, 
+                                     initial_delay: float = 1.0):
+    """Create SSE client with automatic retry logic."""
+    retry_count = 0
+    delay = initial_delay
+    
+    while retry_count < max_retries:
+        try:
+            logger.info(f"Attempting SSE connection to {url} (attempt {retry_count + 1}/{max_retries})")
+            return sse_client(
+                url=url,
+                sse_read_timeout=connection_timeout,
+                headers=headers,
+            )
+        except Exception as e:
+            retry_count += 1
+            if retry_count >= max_retries:
+                logger.error(f"Failed to connect to SSE server after {max_retries} attempts: {e}")
+                raise
+            
+            logger.warning(f"SSE connection failed (attempt {retry_count}/{max_retries}): {e}")
+            logger.info(f"Retrying in {delay} seconds...")
+            await asyncio.sleep(delay)
+            delay = min(delay * 2, 30.0)  # Exponential backoff, max 30 seconds
+
+
+async def maintain_sse_connection(app: FastAPI, url: str, headers: Optional[Dict] = None,
+                                connection_timeout: int = 150, api_dependency=None):
+    """Maintain SSE connection with automatic reconnection."""
+    reconnect_delay = 1.0
+    
+    while True:
+        try:
+            logger.info(f"Establishing SSE connection to {url}")
+            client_context = await create_sse_client_with_retry(
+                url, headers, connection_timeout, max_retries=5, initial_delay=reconnect_delay
+            )
+            
+            async with client_context as (reader, writer, *_):
+                async with ClientSession(reader, writer) as session:
+                    app.state.session = session
+                    
+                    # Clear any existing endpoints and recreate them
+                    # Remove old dynamic endpoints
+                    app.router.routes = [route for route in app.router.routes 
+                                       if not getattr(route, '_is_dynamic_endpoint', False)]
+                    
+                    await create_dynamic_endpoints(app, api_dependency=api_dependency)
+                    app.state.is_connected = True
+                    logger.info(f"Successfully connected to SSE server: {url}")
+                    
+                    # Keep the connection alive and monitor for disconnection
+                    try:
+                        while True:
+                            # Check if session is still alive by attempting a simple operation
+                            await asyncio.sleep(10)  # Check every 10 seconds
+                            try:
+                                # Try to list tools to check if session is still alive
+                                await session.list_tools()
+                            except Exception as ping_error:
+                                logger.warning(f"Session health check failed: {ping_error}")
+                                raise  # This will trigger reconnection
+                    except Exception as e:
+                        logger.warning(f"SSE connection lost: {e}")
+                        app.state.is_connected = False
+                        raise  # This will trigger the outer retry loop
+                        
+        except Exception as e:
+            app.state.is_connected = False
+            logger.error(f"SSE connection error: {e}")
+            logger.info(f"Attempting to reconnect in {reconnect_delay} seconds...")
+            await asyncio.sleep(reconnect_delay)
+            reconnect_delay = min(reconnect_delay * 1.5, 30.0)  # Gradual backoff
+
+
 class GracefulShutdown:
     def __init__(self):
         self.shutdown_event = asyncio.Event()
@@ -301,13 +378,19 @@ async def create_dynamic_endpoints(app: FastAPI, api_dependency=None):
             response_model_fields,
         )
 
-        app.post(
+        endpoint = app.post(
             f"/{endpoint_name}",
             summary=endpoint_name.replace("_", " ").title(),
             description=endpoint_description,
             response_model_exclude_none=True,
             dependencies=[Depends(api_dependency)] if api_dependency else [],
         )(tool_handler)
+        
+        # Mark this as a dynamic endpoint for cleanup purposes
+        for route in app.router.routes:
+            if hasattr(route, 'path') and route.path == f"/{endpoint_name}":
+                route._is_dynamic_endpoint = True
+                break
 
 
 @asynccontextmanager
@@ -398,39 +481,58 @@ async def lifespan(app: FastAPI):
     else:
         # This is a sub-app's lifespan
         app.state.is_connected = False
-        try:
-            if server_type == "stdio":
-                server_params = StdioServerParameters(
-                    command=command,
-                    args=args,
-                    env={**os.environ, **env},
-                )
-                client_context = stdio_client(server_params)
-            elif server_type == "sse":
-                headers = getattr(app.state, "headers", None)
-                client_context = sse_client(
-                    url=args[0],
-                    sse_read_timeout=connection_timeout,
-                    headers=headers,
-                )
-            elif server_type == "streamable-http":
-                headers = getattr(app.state, "headers", None)
-                client_context = streamablehttp_client(url=args[0], headers=headers)
-            else:
-                raise ValueError(f"Unsupported server type: {server_type}")
+        
+        if server_type == "sse":
+            # For SSE connections, use the new reconnection logic
+            url = args[0] if args else ""
+            headers = getattr(app.state, "headers", None)
+            connection_timeout = connection_timeout or 150
+            
+            # Create a background task for maintaining the connection
+            reconnection_task = asyncio.create_task(
+                maintain_sse_connection(app, url, headers, connection_timeout, api_dependency)
+            )
+            
+            try:
+                # Wait a bit for initial connection
+                await asyncio.sleep(2)
+                yield
+            finally:
+                # Cancel the reconnection task on shutdown
+                reconnection_task.cancel()
+                try:
+                    await reconnection_task
+                except asyncio.CancelledError:
+                    pass
+                    
+        else:
+            # Original logic for stdio and streamable-http
+            try:
+                if server_type == "stdio":
+                    server_params = StdioServerParameters(
+                        command=command,
+                        args=args,
+                        env={**os.environ, **env},
+                    )
+                    client_context = stdio_client(server_params)
+                elif server_type == "streamable-http":
+                    headers = getattr(app.state, "headers", None)
+                    client_context = streamablehttp_client(url=args[0], headers=headers)
+                else:
+                    raise ValueError(f"Unsupported server type: {server_type}")
 
-            async with client_context as (reader, writer, *_):
-                async with ClientSession(reader, writer) as session:
-                    app.state.session = session
-                    await create_dynamic_endpoints(app, api_dependency=api_dependency)
-                    app.state.is_connected = True
-                    yield
-        except Exception as e:
-            # Log the full exception with traceback for debugging
-            logger.error(f"Failed to connect to MCP server '{app.title}': {type(e).__name__}: {e}", exc_info=True)
-            app.state.is_connected = False
-            # Re-raise the exception so it propagates to the main app's lifespan
-            raise
+                async with client_context as (reader, writer, *_):
+                    async with ClientSession(reader, writer) as session:
+                        app.state.session = session
+                        await create_dynamic_endpoints(app, api_dependency=api_dependency)
+                        app.state.is_connected = True
+                        yield
+            except Exception as e:
+                # Log the full exception with traceback for debugging
+                logger.error(f"Failed to connect to MCP server '{app.title}': {type(e).__name__}: {e}", exc_info=True)
+                app.state.is_connected = False
+                # Re-raise the exception so it propagates to the main app's lifespan
+                raise
 
 
 async def run(
