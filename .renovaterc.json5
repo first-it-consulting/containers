@@ -46,8 +46,7 @@
     {
       description: ["Auto-merge container app updates"],
       matchFileNames: ["**/docker-bake.hcl"],
-      automerge: true,
-      automergeType: "pr",
+      automerge: false,
       ignoreTests: false,
     },
     {
