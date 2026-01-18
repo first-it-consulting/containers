@@ -4,6 +4,9 @@
     "config:recommended",
    ":enableVulnerabilityAlertsWithLabel(security)"
   ],
+  dependencyDashboard: true,
+  dependencyDashboardAutoclose: true,
+  prCreation: "immediate",
   prConcurrentLimit: 20,
   prHourlyLimit: 0,
   labels: ["dependencies"],
