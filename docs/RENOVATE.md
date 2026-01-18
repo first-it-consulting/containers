@@ -2,27 +2,33 @@
 
 ## Overview
 
-This repository uses GitHub's Renovate app for automated dependency updates. Since this is a **public repository**, we have several advantages over the private `containers-images` repository:
+This repository uses the **GitHub Renovate App** for automated dependency updates. Since this is a **public repository**, we use GitHub's official Renovate app instead of self-hosting.
 
-- ✅ GitHub's official Renovate app (no self-hosting needed)
-- ✅ GitHub Advanced Security features
-- ✅ SARIF upload for vulnerability scanning
-- ✅ Free automated dependency updates
+**Advantages:**
+- ✅ No GitHub Actions minutes consumed
+- ✅ Runs automatically on GitHub's infrastructure  
+- ✅ Hourly update checks
+- ✅ Zero maintenance required
+- ✅ Better performance and reliability
+
+## Installation
+
+### GitHub Renovate App
+
+1. Visit https://github.com/apps/renovate
+2. Click **"Configure"**
+3. Select **first-it-consulting** organization
+4. Choose **"Only select repositories"**
+5. Select **containers** repository
+6. Click **"Save"**
+
+Renovate will:
+- Automatically detect `.renovaterc.json5` configuration
+- Create PRs for outdated dependencies  
+- Run hourly to check for updates
+- Auto-merge PRs via the `auto-merge-renovate.yaml` workflow
 
 ## Configuration
-
-### Renovate Setup
-
-The repository is configured with:
-
-- **Configuration File**: `.renovaterc.json5`
-- **Update Schedule**: Managed by GitHub Renovate app
-- **PR Limits**: 
-  - `prConcurrentLimit: 20` - Up to 20 PRs at once
-  - `prHourlyLimit: 0` - Unlimited (no hourly throttling)
-- **Auto-merge**: Enabled for all docker-bake.hcl updates
-
-### Custom Regex Manager
 
 Renovate monitors version updates in `docker-bake.hcl` files using custom annotations:
 
