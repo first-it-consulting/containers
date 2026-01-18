@@ -17,7 +17,7 @@ jobs:
     if: github.actor == 'renovate[bot]'
     steps:
       - name: Auto-merge
-        uses: pascalgn/automerge-action@eb68b061739a5d2e9e1b13b6a8a98e484f9d2e2c # v0.16.4
+        uses: pascalgn/automerge-action@v0.16.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MERGE_METHOD: squash
