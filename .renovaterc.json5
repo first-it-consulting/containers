@@ -7,6 +7,7 @@
   dependencyDashboard: true,
   dependencyDashboardAutoclose: true,
   prCreation: "immediate",
+  platformAutomerge: false,
   prConcurrentLimit: 20,
   prHourlyLimit: 0,
   labels: ["dependencies"],
