@@ -1,8 +1,12 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
-  extends: ["github>home-operations/renovate-config"],
+  extends: [
+    "config:recommended",
+   ":enableVulnerabilityAlertsWithLabel(security)"
+  ],
   prConcurrentLimit: 20,
   prHourlyLimit: 0,
+  labels: ["dependencies"],
   customManagers: [
     {
       customType: "regex",
