@@ -4,9 +4,9 @@ name: App Inventory
 description: Return items from the apps directory in a JSON array
 
 outputs:
-  apps:
+  items:
     description: App Inventory
-    value: ${{ steps.inventory.outputs.apps }}
+    value: ${{ steps.inventory.outputs.items }}
 
 runs:
   using: composite
@@ -32,5 +32,7 @@ runs:
               }
           }
 
-          const apps = scanDirectory(path.resolve(process.cwd(), 'apps')).sort();
-          core.setOutput('apps', JSON.stringify(apps));
+          const apps = scanDirectory(path.resolve(process.cwd(), 'apps'))
+            .sort()
+            .map(name => ({ name }));
+          core.setOutput('items', JSON.stringify(apps));
