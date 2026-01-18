@@ -1,0 +1,56 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Nightly Build
+
+on:
+  schedule:
+    - cron: "45 3 * * *"  # Every night at 3:45 AM
+  workflow_dispatch:
+
+jobs:
+  repository:
+    name: Get Repository Apps
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.repository.outputs.items }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Get Apps
+        uses: ./.github/actions/app-inventory
+        id: repository
+
+  build:
+    needs: repository
+    name: Build ${{ matrix.apps.name }}
+    uses: ./.github/workflows/image-build-action.yaml
+    permissions:
+      attestations: write
+      contents: write
+      id-token: write
+      packages: write
+      security-events: write
+    secrets: inherit
+    strategy:
+      matrix:
+        apps: ${{ fromJSON(needs.repository.outputs.apps) }}
+      fail-fast: false
+      max-parallel: 4
+    with:
+      app: ${{ matrix.apps.name }}
+      release: true
+
+  status:
+    if: ${{ !cancelled() }}
+    needs: build
+    name: Build Success
+    runs-on: ubuntu-latest
+    steps:
+      - name: Any jobs failed?
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1
+
+      - name: All jobs passed or skipped?
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: echo "All jobs passed or skipped" && echo "${{ toJSON(needs.*.result) }}"
