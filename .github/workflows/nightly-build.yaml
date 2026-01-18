@@ -4,7 +4,7 @@ name: Nightly Build
 
 on:
   schedule:
-    - cron: "45 2 * * *"  # Every night at 2:45 AM
+    - cron: "45 3 * * *"  # Every night at 3:45 AM
   workflow_dispatch:
 
 jobs:
