@@ -1,7 +1,7 @@
 target "docker-metadata-action" {}
 
 variable "VERSION" {
-  // renovate: datasource=github-releases depName=containernetworking/plugins
+  // renovate: datasource=github-releases depName=open-webui/mcpo
   default = "v1.9.0"
 }
 
@@ -15,7 +15,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/containernetworking/plugins"
+    "org.opencontainers.image.source" = "https://github.com/open-webui/mcpo"
   }
 }
 
