@@ -46,7 +46,7 @@ jobs:
           upstream-version: ${{ steps.app-version.outputs.version }}
 
       - name: Build Meta
-        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
+        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
         id: meta
         env:
           DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
@@ -99,7 +99,7 @@ jobs:
             core.setOutput('platform-arch', '${{ matrix.platform }}'.split('/').pop());
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -112,10 +112,10 @@ jobs:
           path: ${{ runner.temp }}
 
       - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
 
       - name: Build
-        uses: docker/bake-action@4ba453fbc2db7735392b93edf935aaf9b1e8f747 # v6.5.0
+        uses: docker/bake-action@5be5f02ff8819ecd3092ea6b2e6261c31774f2b4 # v6.10.0
         id: bake
         with:
           files: |
@@ -193,7 +193,7 @@ jobs:
           merge-multiple: true
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -231,14 +231,14 @@ jobs:
             core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
       - name: Upload Dependency Snapshot
-        uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
+        uses: anchore/sbom-action@0b82b0b1a22399a1c542d4d656f70cd903571b5c # v0.21.1
         with:
           dependency-snapshot: true
           image: ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
@@ -263,7 +263,7 @@ jobs:
     steps:
       - if: ${{ contains(needs.*.result, 'failure') }}
         name: Send Discord Webhook
-        uses: sarisia/actions-status-discord@5ddd3b114a98457dd80a39b2f00b6a998cd69008 # v1.15.3
+        uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708 # v1.16.0
         with:
           color: "0xFF0000"
           description: |
