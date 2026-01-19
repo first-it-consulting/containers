@@ -25,7 +25,7 @@
     {
       customType: "regex",
       description: "Process GH CLI version in Dockerfiles",
-      fileMatch: ["**/Dockerfile"],
+      fileMatch: ["apps/actions-runner/Dockerfile"],
       matchStrings: [
         "    # renovate: datasource=github-releases depName=cli/cli\\n    GH_CLI_VERSION=\"(?<currentValue>[^\"]+)\"",
       ],
