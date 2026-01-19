@@ -4,3 +4,4 @@ fileExistenceTests:
   - name: yq
     path: /usr/local/bin/yq
     shouldExist: true
+
