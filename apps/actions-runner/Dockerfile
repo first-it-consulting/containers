@@ -9,8 +9,8 @@ ENV HOMEBREW_NO_ANALYTICS=1 \
     DEBIAN_FRONTEND="noninteractive" \
     APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
 
-ENV \
-    GH_CLI_VERSION="2.74.0" # renovate: datasource=github-releases depName=cli/cli
+# renovate: datasource=github-releases depName=cli/cli
+ENV GH_CLI_VERSION="2.74.0"
 
 USER root
 
