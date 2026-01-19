@@ -27,7 +27,7 @@
       description: "Process GH CLI version in Dockerfiles",
       fileMatch: ["**/Dockerfile"],
       matchStrings: [
-        "# renovate: datasource=github-releases depName=cli/cli\\nENV GH_CLI_VERSION=\"(?<currentValue>[^\"]+)\"",
+        "    # renovate: datasource=github-releases depName=cli/cli\\n    GH_CLI_VERSION=\"(?<currentValue>[^\"]+)\"",
       ],
       datasourceTemplate: "github-releases",
       depNameTemplate: "cli/cli",
