@@ -54,10 +54,14 @@
   },
   packageRules: [
     {
-      description: ["Auto-merge container app updates"],
+      description: "Auto-merge Docker image version updates",
       matchFileNames: ["**/docker-bake.hcl"],
-      automerge: false,
-      ignoreTests: false,
+      matchDatasources: ["docker"],
+      automerge: true,
+      automergeType: "pr",
+      automergeStrategy: "squash",
+      ignoreTests: true,
+      labels: ["dependencies", "docker", "auto-merge"]
     },
     {
       description: ["Allowed Ubuntu versions for all container images"],
