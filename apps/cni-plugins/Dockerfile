@@ -1,7 +1,8 @@
+# renovate: datasource=docker depName=docker.io/library/alpine
 FROM docker.io/library/alpine:3.23
 
 ARG TARGETARCH
-ARG VERSION
+ARG VERSION=latest
 
 ENV CNI_BIN_DIR=/host/opt/cni/bin
 

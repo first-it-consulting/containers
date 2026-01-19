@@ -1,7 +1,7 @@
 FROM python:3.14-slim-bookworm
 
 ARG TARGETARCH
-ARG VERSION
+ARG VERSION=latest
 
 # Install uv (from official binary), nodejs, npm, and git
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
