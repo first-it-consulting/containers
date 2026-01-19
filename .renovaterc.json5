@@ -22,6 +22,16 @@
       datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
       versioningTemplate: "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}",
     },
+    {
+      customType: "regex",
+      description: "Process GH CLI version in Dockerfiles",
+      fileMatch: ["**/Dockerfile"],
+      matchStrings: [
+        "# renovate: datasource=github-releases depName=cli/cli\\nENV GH_CLI_VERSION=\"(?<currentValue>[^\"]+)\"",
+      ],
+      datasourceTemplate: "github-releases",
+      depNameTemplate: "cli/cli",
+    },
   ],
   customDatasources: {
     servarr: {
