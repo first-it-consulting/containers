@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=docker depName=ghcr.io/actions/actions-runner
-  default = "2.331.0"
+  default = "2.334.0"
 }
 
 group "default" {
@@ -31,5 +31,3 @@ target "image-all" {
     "linux/arm64"
   ]
 }
-
-
