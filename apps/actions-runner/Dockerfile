@@ -1,4 +1,4 @@
-ARG VERSION=latest
+ARG VERSION=2.337.0
 FROM ghcr.io/actions/actions-runner:${VERSION}
 ARG TARGETARCH
 
