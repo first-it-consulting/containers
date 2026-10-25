@@ -1,5 +1,5 @@
 # renovate: datasource=docker depName=docker.io/library/alpine
-FROM docker.io/library/alpine:3.23
+FROM docker.io/library/alpine:3.24
 
 ARG TARGETPLATFORM
 ARG VERSION=latest
