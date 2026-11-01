@@ -119,7 +119,7 @@ The repository contains the following apps:
 
 - **actions-runner**: GitHub Actions runner (from `ghcr.io/actions/actions-runner`)
 - **cni-plugins**: CNI network plugins (from `containernetworking/plugins`)
-- **mcpo**: Custom app with GitHub releases tracking
+- ~~**mcpo**~~: moved to its own repo, [first-it-consulting/mcpo](https://github.com/first-it-consulting/mcpo)
 - **postgres-init**: PostgreSQL initialization container (Alpine-based)
 
 ## Testing Renovate
