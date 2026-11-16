@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=repology depName=alpine_3_24/postgresql17-client versioning=loose
-  default = "17.11-r0"
+  default = "17.12-r0"
 }
 
 group "default" {
