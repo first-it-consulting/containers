@@ -141,7 +141,7 @@ jobs:
         uses: ./.github/actions/container-tests
         with:
           app: ${{ inputs.app }}
-          image: ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.digest'] }}
+          image: ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.config.digest'] || fromJSON(steps.bake.outputs.metadata).image['containerimage.digest'] }}
           token: ${{ github.token }}
 
       - if: ${{ inputs.release }}
