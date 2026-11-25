@@ -63,7 +63,7 @@ jobs:
         run: mv ${{ steps.meta.outputs.bake-file }} ${{ runner.temp }}/bake-meta.json
 
       - name: Upload meta bake definition
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ${{ inputs.app }}-bake-meta
           path: ${{ runner.temp }}/bake-meta.json
@@ -105,7 +105,7 @@ jobs:
           password: ${{ github.token }}
 
       - name: Download Bake Metadata
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: ${{ inputs.app }}-bake-meta
           path: ${{ runner.temp }}
@@ -153,7 +153,7 @@ jobs:
 
       - if: ${{ inputs.release }}
         name: Upload digest
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ${{ inputs.app }}-digests-${{ steps.vars.outputs.platform-arch }}
           path: ${{ runner.temp }}/digests/*
@@ -179,13 +179,13 @@ jobs:
             core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
 
       - name: Download Bake Metadata
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: ${{ inputs.app }}-bake-meta
           path: ${{ runner.temp }}
 
       - name: Download digests
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           path: ${{ runner.temp }}/digests
           pattern: ${{ inputs.app }}-digests-*
