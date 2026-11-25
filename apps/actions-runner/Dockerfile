@@ -11,7 +11,7 @@ ENV HOMEBREW_NO_ANALYTICS=1 \
 
 ENV \
     # renovate: datasource=github-releases depName=cli/cli
-    GH_CLI_VERSION="v2.105.0"
+    GH_CLI_VERSION="v2.106.0"
 
 USER root
 
