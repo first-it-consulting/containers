@@ -60,7 +60,6 @@
       automerge: true,
       automergeType: "pr",
       automergeStrategy: "squash",
-      ignoreTests: true,
       labels: ["dependencies", "docker", "auto-merge"]
     },
     {

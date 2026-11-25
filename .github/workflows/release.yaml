@@ -29,7 +29,7 @@ jobs:
     steps:
       - name: Get changed files
         id: changed-files
-        uses: bjw-s-labs/action-changed-files@1a5aeab1bfa64d0c4e786f501d5a3f1fad4a24da # v0.4.1
+        uses: bjw-s-labs/action-changed-files@147be9638332cf68fd60714a610509d7a9360d60 # v0.7.0
         with:
           path: apps
           include_only_directories: true
@@ -44,10 +44,10 @@ jobs:
       apps: ${{ steps.apps.outputs.apps }}
     steps:
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Get Apps to Build
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         id: apps
         env:
           APPS: ${{ github.event_name == 'workflow_dispatch' && inputs.app || join(fromJSON(needs.prepare.outputs.changed-files), ' ') }}
